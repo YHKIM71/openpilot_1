@@ -50,9 +50,10 @@ TogglesPanel::TogglesPanel(QWidget *parent) : QWidget(parent) {
                                   "Display speed in km/h instead of mp/h.",
                                   "../assets/offroad/icon_metric.png",
                                   this));
+
   toggles.append(new ParamControl("UploadRaw",
                                   "Upload Raw Logs",
-                                  "WiFi를 사용하는 동안 로그 및 풀해상도로 비디오 업로드",
+                                  "Upload full logs and full resolution video by default while on WiFi. If not enabled, individual logs can be marked for upload at my.comma.ai/useradmin.",
                                   "../assets/offroad/icon_network.png",
                                   this));
 
@@ -167,7 +168,7 @@ TogglesPanel::TogglesPanel(QWidget *parent) : QWidget(parent) {
                                   this));
   toggles.append(new ParamControl("OnePedalMode",
                                   "[GM] One-pedal mode (tap me)",
-                                  "\"Disable disengage on gas\"옵션과 연동됨. OP가 커브길과 앞차량 추종시 조향과 브레이크를 계속하는 동안 (조정가능한 제동옵션이 포함된) 가속페달을 사용하여 속도를 제어할 수 있습니다. 활성화하려면("One-pedal/engage on gas"를 참조) 일반 크루즈운행으로 돌아가려면 SET/RESUME 버튼을 누르십시오. ② 페달 아이콘을 눌러 원페달모드로 전환합니다(아래 참조). one-pedal 모드가 활성화되면 차량이 거리 표시기를 따르고 페달 아이콘 색상이 1/2/3 = (⚫️)/🟢/🟠/🔴 = (regen/engine)/light/moderate/heavy braking 제동 중임을 나타냅니다. ③ 추종거리 버튼을 눌러 light/moderate braking 사이를 전환하게 합니다; 제동 사이를 전환하고, heavy braking을 유지하십시오. ④ 페달 아이콘을 탭하거나 추종 거리 버튼을 사용하여, 마찰 브레이킹 🟢/🟠/🔴 및 리젠/엔진⚫제동 사이를 전환합니다; 한번 탭하면 마찰 제동이 활성화되고, 두번 탭하면 가속페달을 밟고 있거나, 정차중에는 마찰 마찰 제동이 비활성화됩니다.",
+                                  "\"Disable disengage on gas\"옵션과 연동됨. OP가 커브길과 앞차량 추종시 조향과 브레이크를 계속하는 동안 -조정가능한 제동옵션이 포함된- 가속페달을 사용하여 속도를 제어할 수 있습니다. 활성화하려면 One-pedal engage on gas를 참조 일반 크루즈운행으로 돌아가려면 SET, RESUME 버튼을 누르십시오. ② 페달 아이콘을 눌러 원페달모드로 전환합니다 아래 참조 one-pedal 모드가 활성화되면 차량이 거리 표시기를 따르고 페달 아이콘 색상이 1/2/3 = (⚫️)/🟢/🟠/🔴 = (regen/engine)/light/moderate/heavy braking 제동 중임을 나타냅니다. ③ 추종거리 버튼을 눌러 light/moderate braking 사이를 전환하게 합니다; 제동 사이를 전환하고, heavy braking을 유지하십시오. ④ 페달 아이콘을 탭하거나 추종 거리 버튼을 사용하여, 마찰 브레이킹 🟢/🟠/🔴 및 리젠/엔진⚫제동 사이를 전환합니다; 한번 탭하면 마찰 제동이 활성화되고, 두번 탭하면 가속페달을 밟고 있거나, 정차중에는 마찰 마찰 제동이 비활성화됩니다.",
                                   "../assets/offroad/icon_car_pedal.png",
                                   this));
   toggles.append(new ParamControl("OnePedalModeSimple",
