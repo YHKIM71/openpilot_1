@@ -83,12 +83,12 @@ void Sidebar::updateState(const UIState &s) {
   }
   setProperty("connectStatus", QVariant::fromValue(connectStatus));
 
-  ItemStatus tempStatus = {"HIGH\n�̿¿µ�", danger_color};
+  ItemStatus tempStatus = {"HIGH\n이온온도", danger_color};
   auto ts = deviceState.getThermalStatus();
   if (ts == cereal::DeviceState::ThermalStatus::GREEN) {
-    tempStatus = {"GOOD\n�̿¿µ�", good_color};
+    tempStatus = {"GOOD\n이온온도", good_color};
   } else if (ts == cereal::DeviceState::ThermalStatus::YELLOW) {
-    tempStatus = {"OK\n�̿¿µ�", warning_color};
+    tempStatus = {"OK\n이온온도", warning_color};
   }
   setProperty("tempStatus", QVariant::fromValue(tempStatus));
 
@@ -149,7 +149,7 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   p.drawText(bt, Qt::AlignLeft, battery_str);
 
   const QRect temp = QRect(30, 367, 240, 50);
-  snprintf(temp_str, sizeof(temp_str), "%.1f%s", m_ambientTemp, "��C");
+  snprintf(temp_str, sizeof(temp_str), "%.1f%s", m_ambientTemp, "°C");
   p.drawText(temp, Qt::AlignCenter, temp_str);
   // metrics
   temp_drawMetric(p, temp_status.first, temp_status.second, 365);
