@@ -558,6 +558,9 @@ struct ControlsState @0x97ff69c53601abf1 {
   cumLagMs @15 :Float32;
   canErrorCounter @57 :UInt32;
 
+  # Road Speed Limiter
+  roadLimitSpeed @61 :Int32;
+  roadLimitSpeedLeftDist @62 :Int32;
   lateralControlState :union {
     indiState @52 :LateralINDIState;
     pidState @53 :LateralPIDState;
@@ -1488,6 +1491,18 @@ struct UploaderState {
   lastFilename @6 :Text;
 }
 
+struct RoadLimitSpeed {
+    active @0 :UInt16;
+    roadLimitSpeed @1 :UInt16;
+    isHighway @2 :Bool;
+    camType @3 :UInt16;
+    camLimitSpeedLeftDist @4 :UInt16;
+    camLimitSpeed @5 :UInt16;
+    sectionLimitSpeed @6 :UInt16;
+    sectionLeftDist @7 :UInt16;
+    camSpeedFactor @8 :Float32;
+}
+
 struct Event {
   logMonoTime @0 :UInt64;  # nanoseconds
   valid @67 :Bool = true;
@@ -1545,6 +1560,8 @@ struct Event {
     deviceState @6 :DeviceState;
     logMessage @18 :Text;
 
+    # neokii
+    roadLimitSpeed @81 :RoadLimitSpeed;
 
     # *********** debug ***********
     testJoystick @52 :Joystick;

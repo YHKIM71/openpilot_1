@@ -122,6 +122,9 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     pauseLongOnGasPress @113;
     stoppedWaitForGas @114;
     buttonMainCancel @115;
+    #Road speed Limiter
+    slowingDownSpeed @116;
+    slowingDownSpeedSound @117;
 
     driverMonitorLowAccDEPRECATED @68;
     radarCanErrorDEPRECATED @15;
@@ -400,6 +403,8 @@ struct CarControl {
       chimeWarningRepeat @6;
       chimePrompt @7;
       chimeWarning2Repeat @8;
+      chimeSlowingDownSpeed @9;
+      chimeAutoHoldOn @10;
     }
   }
 
