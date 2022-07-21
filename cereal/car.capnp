@@ -248,6 +248,7 @@ struct CarState {
     standstill @4 :Bool;
     nonAdaptive @5 :Bool;
     speedLimit @6 :Float32;
+    resumeButton @7 :Bool;
   }
 
   enum GearShifter {
