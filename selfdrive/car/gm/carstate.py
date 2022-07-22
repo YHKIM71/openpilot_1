@@ -326,7 +326,7 @@ class CarState(CarStateBase):
         self.one_pedal_mode_engage_on_gas_enabled = False
         self._params.put_bool("OnePedalModeEngageOnGas", False)
 
-    self.resume_button_pressed = bool(pt_cp.vl["ASCMActiveCruiseControlStatus"]["ACCResumeButton"])
+    #self.resume_button_pressed = bool(pt_cp.vl["ASCMActiveCruiseControlStatus"]["ACCResumeButton"])
     cruise_enabled = self.pcm_acc_status != AccState.OFF
     ret.cruiseState.enabled = cruise_enabled
     ret.cruiseState.standstill = False
@@ -413,7 +413,7 @@ class CarState(CarStateBase):
       ("LateralAcceleration", "EBCMVehicleDynamic", 0),
       ("YawRate", "EBCMVehicleDynamic", 0),
       ("YawRate2", "EBCMVehicleDynamic", 0),
-      ("ACCResumeButton", "ASCMActiveCruiseControlStatus", 0),
+      #("ACCResumeButton", "ASCMActiveCruiseControlStatus", 0),
     ]
 
     checks = [
@@ -432,7 +432,7 @@ class CarState(CarStateBase):
       ("PSCMSteeringAngle", 100),
       ("ECMEngineCoolantTemp", 1),
       ("EBCMVehicleDynamic", 100),
-      ("ASCMActiveCruiseControlStatus", 10),
+      #("ASCMActiveCruiseControlStatus", 10),
     ]
 
     if CP.carFingerprint in [CAR.VOLT, CAR.VOLT18]:
