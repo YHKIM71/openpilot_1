@@ -5,7 +5,7 @@
 
 static void ui_draw_extras_limit_speed(UIState *s)
 {
-    const UIScene *scene = &s->scene;
+    //const UIScene *scene = &s->scene;
     auto controls_state = (*s->sm)["controlsState"].getControlsState();
     int limit_speed = controls_state.getRoadLimitSpeed();
     int left_dist = controls_state.getRoadLimitSpeedLeftDist();

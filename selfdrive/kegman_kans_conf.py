@@ -26,24 +26,16 @@ class kegman_kans_conf():
       if "battPercOff" not in self.config:
         self.config.update({"battPercOff":"80"})
         self.config.update({"carVoltageMinEonShutdown":"12000"})
-        self.config.update({"brakeStoppingTarget":"0.65"})
         self.element_updated = True
 
       if "tuneGernby" not in self.config:
         self.config.update({"tuneGernby":"1"})
-        self.config.update({"Kp":"0.25"})
-        self.config.update({"Ki":"0.12"})
-        self.config.update({"Kd":"0.00017"})
         self.element_updated = True
 
       if "liveParams" not in self.config:
         self.config.update({"liveParams":"1"})
         self.element_updated = True
 
-# AutoHold
-      if "AutoHold" not in self.config:
-        self.config.update({"AutoHold":"1"})
-        self.element_updated = True
 
       if "nTune" not in self.config:
         self.config.update({"nTune":"1"})
@@ -74,8 +66,8 @@ class kegman_kans_conf():
         self.write_config(self.config)
 
     else:
-      self.config = {"battChargeMin":"60", "battChargeMax":"75", "wheelTouchSeconds":"18000", \
-                     "battPercOff":"80", "carVoltageMinEonShutdown":"12000", \
+      self.config = {"battChargeMin":"65", "battChargeMax":"85", "wheelTouchSeconds":"18000", \
+                     "battPercOff":"60", "carVoltageMinEonShutdown":"12000", \
                      "brakeStoppingTarget":"0.65", "tuneGernby":"1", "AutoHold":"1", "steerLimitTimer":"5.0", \
                      "STOPPING_DISTANCE":"2.0", "CruiseDelta":"5", \
                      "CruiseEnableMin":"10", "epsModded": "0", "CAMERA_SPEED_FACTOR":"0.99"}

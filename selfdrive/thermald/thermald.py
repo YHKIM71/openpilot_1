@@ -21,6 +21,8 @@ from selfdrive.controls.lib.pid import PIDController
 from selfdrive.hardware import EON, TICI, PC, HARDWARE
 from selfdrive.loggerd.config import get_available_percent
 from selfdrive.pandad import get_expected_signature
+from selfdrive.kegman_kans_conf import kegman_kans_conf
+
 from selfdrive.swaglog import cloudlog
 from selfdrive.thermald.power_monitoring import PowerMonitoring
 from selfdrive.version import tested_branch, terms_version, training_version
@@ -141,6 +143,28 @@ def handle_fan_tici(controller, max_cpu_temp, fan_speed, ignition):
 
   return fan_pwr_out
 
+def check_car_battery_voltage(should_start, pandaState, charging_disabled, msg):
+  sm = messaging.SubMaster(["pandaState"])
+  sm.update(0)
+  pandaState = sm['pandaState']
+  if sm.updated['pandaState']:
+    print(pandaState)
+
+  kegman_kans = kegman_kans_conf()
+  if charging_disabled and (pandaState is None) and msg.deviceState.batteryPercent < int(kegman_kans.conf['battChargeMin']):
+    charging_disabled = False
+    os.system('echo "1" > /sys/class/power_supply/battery/charging_enabled')
+  elif (charging_disabled or not charging_disabled) and (msg.deviceState.batteryPercent < int(kegman_kans.conf['battChargeMax']) or (pandaState is None and not should_start)):
+    charging_disabled = False
+    os.system('echo "1" > /sys/class/power_supply/battery/charging_enabled')
+  elif not charging_disabled and (msg.deviceState.batteryPercent > int(kegman_kans.conf['battChargeMax']) or (pandaState is not None and not should_start)):
+    charging_disabled = True
+    os.system('echo "0" > /sys/class/power_supply/battery/charging_enabled')
+  elif msg.deviceState.batteryCurrent < 0 and msg.deviceState.batteryPercent > int(kegman_kans.conf['battChargeMax']):
+    charging_disabled = True
+    os.system('echo "0" > /sys/class/power_supply/battery/charging_enabled')
+
+  return charging_disabled
 
 def set_offroad_alert_if_changed(offroad_alert: str, show_alert: bool, extra_text: Optional[str]=None):
   if prev_offroad_states.get(offroad_alert, None) == (show_alert, extra_text):
@@ -181,6 +205,7 @@ def thermald_thread():
 
   current_filter = FirstOrderFilter(0., CURRENT_TAU, DT_TRML)
   temp_filter = FirstOrderFilter(0., TEMP_TAU, DT_TRML)
+  charging_disabled = False
   pandaState_prev = None
   should_start_prev = False
   handle_fan = None
@@ -408,6 +433,16 @@ def thermald_thread():
       started_ts = None
       if off_ts is None:
         off_ts = sec_since_boot()
+    # from bellow line, to control charging disabled
+    charging_disabled = check_car_battery_voltage(should_start, pandaState, charging_disabled, msg)
+
+    if msg.deviceState.batteryCurrent > 0:
+      msg.deviceState.batteryStatus = "Discharging"
+    else:
+      msg.deviceState.batteryStatus = "Charging"
+
+
+    msg.deviceState.chargingDisabled = charging_disabled #to this line
 
     # Offroad power monitoring
     power_monitor.calculate(pandaState)
@@ -444,6 +479,7 @@ def thermald_thread():
     pm.send("deviceState", msg)
 
     if EON and not is_uno:
+      print(msg) # for charging disabled
       set_offroad_alert_if_changed("Offroad_ChargeDisabled", (not usb_power))
 
     should_start_prev = should_start
