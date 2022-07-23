@@ -228,7 +228,7 @@ class RoadSpeedLimiter:
 
   def get_max_speed(self, CS, v_cruise_speed):
 
-    log = ""
+    login = ""
     self.recv()
 
     if self.roadLimitSpeed is None:
@@ -292,10 +292,10 @@ class RoadSpeedLimiter:
             pp = 0
 
           return cam_limit_speed * CAMERA_SPEED_FACTOR + int(
-            pp * diff_speed), cam_limit_speed, cam_limit_speed_left_dist, first_started, log
+            pp * diff_speed), cam_limit_speed, cam_limit_speed_left_dist, first_started, login
 
         self.slowing_down = False
-        return 0, cam_limit_speed, cam_limit_speed_left_dist, False, log
+        return 0, cam_limit_speed, cam_limit_speed_left_dist, False, login
 
       elif section_left_dist is not None and section_limit_speed is not None and section_left_dist > 0:
         if MIN_LIMIT <= section_limit_speed <= MAX_LIMIT:
@@ -306,17 +306,17 @@ class RoadSpeedLimiter:
           else:
             first_started = False
 
-          return section_limit_speed * CAMERA_SPEED_FACTOR, section_limit_speed, section_left_dist, first_started, log
+          return section_limit_speed * CAMERA_SPEED_FACTOR, section_limit_speed, section_left_dist, first_started, login
 
         self.slowing_down = False
-        return 0, section_limit_speed, section_left_dist, False, log
+        return 0, section_limit_speed, section_left_dist, False, login
 
     except Exception as e:
-      log = "Ex: " + str(e)
+      login = "Ex: " + str(e)
       pass
 
     self.slowing_down = False
-    return 0, 0, 0, False, log
+    return 0, 0, 0, False, login
 
 road_speed_limiter = None
 
