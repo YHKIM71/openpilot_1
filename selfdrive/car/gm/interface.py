@@ -164,7 +164,7 @@ class CarInterface(CarInterfaceBase):
 
     if candidate in [CAR.VOLT, CAR.VOLT18]:
       # supports stop and go, but initial engage must be above 18mph (which include conservatism)
-      ret.minEnableSpeed = -1
+      ret.minEnableSpeed = -1 * CV.MPH_TO_MS
       ret.mass = 1607. + STD_CARGO_KG
       ret.wheelbase = 2.69
       ret.steerRatio = 17.7  # Stock 15.7, LiveParameters
@@ -449,11 +449,11 @@ class CarInterface(CarInterfaceBase):
       if not ret.standstill and self.CS.lkMode and self.CS.lane_change_steer_factor < 1.:
         events.add(car.CarEvent.EventName.blinkerSteeringPaused)
         steer_paused = True
-    if ret.vEgo < self.CP.minSteerSpeed:
+    '''if ret.vEgo < self.CP.minSteerSpeed:
       if ret.standstill and cruiseEnabled and not ret.brakePressed and not self.CS.pause_long_on_gas_press and not self.CS.autoHoldActivated and not self.CS.disengage_on_gas and t - self.CS.sessionInitTime > 10. and not self.CS.resume_required:
         events.add(car.CarEvent.EventName.stoppedWaitForGas)
       elif not steer_paused and self.CS.lkMode and not self.CS.resume_required:
-        events.add(car.CarEvent.EventName.belowSteerSpeed)
+        events.add(car.CarEvent.EventName.belowSteerSpeed)'''
     if self.CS.autoHoldActivated:
       self.CS.lastAutoHoldTime = t
       events.add(car.CarEvent.EventName.autoHoldActivated)

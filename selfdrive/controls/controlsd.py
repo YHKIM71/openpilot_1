@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import math
+import numpy as np
 from numbers import Number
 
 from cereal import car, log
@@ -13,7 +14,7 @@ from selfdrive.config import Conversions as CV
 from selfdrive.swaglog import cloudlog
 from selfdrive.boardd.boardd import can_list_to_can_capnp
 from selfdrive.car.car_helpers import get_car, get_startup_event, get_one_can
-from selfdrive.controls.lib.lane_planner import CAMERA_OFFSET
+from selfdrive.controls.lib.lane_planner import CAMERA_OFFSET, TRAJECTORY_SIZE
 from selfdrive.controls.lib.drive_helpers import update_v_cruise, initialize_v_cruise, V_CRUISE_MIN
 from selfdrive.controls.lib.drive_helpers import get_lag_adjusted_curvature
 from selfdrive.controls.lib.longcontrol import LongControl, STARTING_TARGET_SPEED
@@ -174,6 +175,7 @@ class Controls:
     self.road_limit_speed = 0
     self.road_limit_left_dist = 0
     self.v_cruise_kph_limit = 0
+    self.curve_speed_ms = 255.
 
     # TODO: no longer necessary, aside from process replay
     self.sm['liveParameters'].valid = True
@@ -322,11 +324,11 @@ class Controls:
 
     # TODO: fix simulator
     if not SIMULATION:
-      if not NOSENSOR:
-        self.gpsWasOK = self.gpsWasOK or self.sm['liveLocationKalman'].gpsOK
-        if self.gpsWasOK and not self.sm['liveLocationKalman'].gpsOK and (self.distance_traveled > 1000):
-          # Not show in first 1 km to allow for driving out of garage. This event shows after 5 minutes
-          self.events.add(EventName.noGps)
+      #if not NOSENSOR:
+      #  self.gpsWasOK = self.gpsWasOK or self.sm['liveLocationKalman'].gpsOK
+      #  if self.gpsWasOK and not self.sm['liveLocationKalman'].gpsOK and (self.distance_traveled > 1000):
+      #    # Not show in first 1 km to allow for driving out of garage. This event shows after 5 minutes
+      #    self.events.add(EventName.noGps)
       if not self.sm.all_alive(self.camera_packets):
         self.events.add(EventName.cameraMalfunction)
       if self.sm['modelV2'].frameDropPerc > 30:
@@ -384,6 +386,37 @@ class Controls:
     self.distance_traveled += CS.vEgo * DT_CTRL
 
     return CS
+
+# bellows are for Slow on Curve by Neokii
+  def cal_curve_speed(self, sm, v_ego, frame):
+
+    if frame % 10 == 0:
+      md = sm['modelV2']
+      if md is not None and len(md.position.x) == TRAJECTORY_SIZE and len(md.position.y) == TRAJECTORY_SIZE:
+        x = md.position.x
+        y = md.position.y
+        dy = np.gradient(y, x)
+        d2y = np.gradient(dy, x)
+        curv = d2y / (1 + dy ** 2) ** 1.5
+
+        start = int(interp(v_ego, [10., 35.], [5, TRAJECTORY_SIZE-10]))
+        curv = curv[start:min(start+10, TRAJECTORY_SIZE)]
+#        curv = curv[5:TRAJECTORY_SIZE - 10]
+        a_y_max = 2.975 - v_ego * 0.0375  # ~1.85 @ 75mph, ~2.6 @ 25mph
+        v_curvature = np.sqrt(a_y_max / np.clip(np.abs(curv), 1e-4, None))
+        model_speed = np.mean(v_curvature) * 0.8
+
+        if model_speed < v_ego:
+          self.curve_speed_ms = float(max(model_speed, 42. * CV.KPH_TO_MS))
+        else:
+          self.curve_speed_ms = 255.
+
+        if np.isnan(self.curve_speed_ms):
+          self.curve_speed_ms = 255.
+      else:
+        self.curve_speed_ms = 255.
+
+    return self.curve_speed_ms
 
   def state_transition(self, CS):
     """Compute conditional state transitions and execute actions on state transitions"""
@@ -447,7 +480,7 @@ class Controls:
     elif self.CP.pcmCruise and CS.cruiseState.enabled:
       self.v_cruise_kph = CS.cruiseState.speed * CV.MS_TO_KPH
 
-    limit_speed, self.road_limit_speed, self.road_limit_left_dist, first_started, login = road_speed_limiter_get_max_speed(CS, self.v_cruise_kph)
+    limit_speed, self.road_limit_speed, self.road_limit_left_dist, first_started, max_speed_log = road_speed_limiter_get_max_speed(CS, self.v_cruise_kph)
 
     if limit_speed > 20:
       self.v_cruise_kph_limit = min(limit_speed, self.v_cruise_kph)
@@ -457,6 +490,10 @@ class Controls:
 
     else:
       self.v_cruise_kph_limit = self.v_cruise_kph
+    max_speed_log = ""
+# 2 lines for Slow on Curve
+    curv_speed_ms = self.cal_curve_speed(self.sm, CS.vEgo, self.sm.frame)
+    self.v_cruise_kph_limit = min(self.v_cruise_kph_limit, curv_speed_ms * CV.MS_TO_KPH)
 
     if self.events.any(ET.RESET_V_CRUISE):
       self.v_cruise_kph = 0
