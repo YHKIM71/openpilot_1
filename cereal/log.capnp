@@ -849,6 +849,7 @@ struct LongitudinalPlan @0xe00b5b3eba12876c {
   visionMaxPredictedLateralAccelerationDistance @59 :Float32;
   visionMaxPredictedCurvature @60 :Float32;
   visionPredictedPathSource @61 :VisionPredictedPathSource;
+  visionVf @64 :Float32;
 
   dynamicFollowState0 @62 :DynamicFollowState;
   dynamicFollowState1 @63 :DynamicFollowState;
@@ -1446,6 +1447,8 @@ struct LiveMapData {
   turnSpeedLimitsAheadDistances @10 :List(Float32);
   turnSpeedLimitsAheadSigns @11 :List(Int16);
   lastGpsTimestamp @12 :Int64;  # Milliseconds since January 1, 1970.
+  currentRoadName @13 :Text;
+  currentRoadType @14 :Text;
 }
 
 struct CameraOdometry {

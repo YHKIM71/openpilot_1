@@ -114,7 +114,7 @@ class CarState(CarStateBase):
     self.one_pedal_pitch_brake_adjust_bp = [-0.08, -0.005, 0.005, 0.10] # [radians] 0.12 radians of pitch ≈ 12% grade. No change within ±0.02
     self.one_pedal_pitch_brake_adjust_v = [[.6, 1., 1., 1.5], [.75, 1., 1., 1.5], [.9, 1., 1., 1.5]] # used to scale the value of apply_brake
     self.one_pedal_angle_steers_cutoff_bp = [60., 270.] # [degrees] one pedal braking goes down one "level" as steering wheel is turned more than this angle
-    self.one_pedal_coast_lead_dist_apply_brake_bp = [4.5, 7.5] # [m] distance to lead
+    self.one_pedal_coast_lead_dist_apply_brake_bp = [4.5, 15.] # [m] distance to lead
     self.one_pedal_coast_lead_dist_apply_brake_v = [1., 0.] # [unitless] factor of light one-pedal braking
     
     self.drive_mode_button = False
@@ -326,11 +326,10 @@ class CarState(CarStateBase):
         self.one_pedal_mode_engage_on_gas_enabled = False
         self._params.put_bool("OnePedalModeEngageOnGas", False)
 
-    #self.resume_button_pressed = bool(pt_cp.vl["ASCMActiveCruiseControlStatus"]["ACCResumeButton"])
+    
     cruise_enabled = self.pcm_acc_status != AccState.OFF
     ret.cruiseState.enabled = cruise_enabled
     ret.cruiseState.standstill = False
-    ret.cruiseState.resumeButton = self.resume_button_pressed
     
     one_pedal_mode_active = (self.one_pedal_mode_enabled and ret.cruiseState.enabled and self.v_cruise_kph * CV.KPH_TO_MS <= self.one_pedal_mode_max_set_speed)
     coast_one_pedal_mode_active = (ret.cruiseState.enabled and self.v_cruise_kph * CV.KPH_TO_MS <= self.one_pedal_mode_max_set_speed)
@@ -413,7 +412,6 @@ class CarState(CarStateBase):
       ("LateralAcceleration", "EBCMVehicleDynamic", 0),
       ("YawRate", "EBCMVehicleDynamic", 0),
       ("YawRate2", "EBCMVehicleDynamic", 0),
-      #("ACCResumeButton", "ASCMActiveCruiseControlStatus", 0),
     ]
 
     checks = [
@@ -432,7 +430,6 @@ class CarState(CarStateBase):
       ("PSCMSteeringAngle", 100),
       ("ECMEngineCoolantTemp", 1),
       ("EBCMVehicleDynamic", 100),
-      #("ASCMActiveCruiseControlStatus", 10),
     ]
 
     if CP.carFingerprint in [CAR.VOLT, CAR.VOLT18]:

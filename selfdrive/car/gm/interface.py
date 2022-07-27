@@ -98,12 +98,12 @@ class CarInterface(CarInterfaceBase):
   @staticmethod
   def get_steer_feedforward_volt_torque(desired_lateral_accel, v_ego):
     ANGLE_COEF = 0.10000000
-    ANGLE_COEF2 = 0.13122630
-    ANGLE_OFFSET = 0.00666167
-    SPEED_OFFSET = -3.29933821
-    SIGMOID_COEF_RIGHT = 0.53844801
-    SIGMOID_COEF_LEFT = 0.47000514
-    SPEED_COEF = 0.60112716
+    ANGLE_COEF2 = 0.13609369
+    ANGLE_OFFSET = 0.00215830
+    SPEED_OFFSET = -3.40740140
+    SIGMOID_COEF_RIGHT = 0.54324908
+    SIGMOID_COEF_LEFT = 0.48109872
+    SPEED_COEF = 0.59589789
     return get_steer_feedforward_erf(desired_lateral_accel, v_ego, ANGLE_COEF, ANGLE_COEF2, ANGLE_OFFSET, SPEED_OFFSET, SIGMOID_COEF_RIGHT, SIGMOID_COEF_LEFT, SPEED_COEF)
 
   def get_steer_feedforward_function(self):
@@ -164,7 +164,7 @@ class CarInterface(CarInterfaceBase):
 
     if candidate in [CAR.VOLT, CAR.VOLT18]:
       # supports stop and go, but initial engage must be above 18mph (which include conservatism)
-      ret.minEnableSpeed = -1 * CV.MPH_TO_MS
+      ret.minEnableSpeed = -1
       ret.mass = 1607. + STD_CARGO_KG
       ret.wheelbase = 2.69
       ret.steerRatio = 17.7  # Stock 15.7, LiveParameters
@@ -178,8 +178,8 @@ class CarInterface(CarInterfaceBase):
         ret.lateralTuning.init('torque')
         ret.lateralTuning.torque.useSteeringAngle = True
         ret.lateralTuning.torque.kp = 1.8 / max_lateral_accel
-        ret.lateralTuning.torque.ki = 0.6 / max_lateral_accel
-        ret.lateralTuning.torque.kd = 4.0 / max_lateral_accel
+        ret.lateralTuning.torque.ki = 0.55 / max_lateral_accel
+        ret.lateralTuning.torque.kd = 5.0 / max_lateral_accel
         ret.lateralTuning.torque.kf = 1.0 # use with custom torque ff
         ret.lateralTuning.torque.friction = 0.005
       else:
@@ -453,7 +453,7 @@ class CarInterface(CarInterfaceBase):
       if ret.standstill and cruiseEnabled and not ret.brakePressed and not self.CS.pause_long_on_gas_press and not self.CS.autoHoldActivated and not self.CS.disengage_on_gas and t - self.CS.sessionInitTime > 10. and not self.CS.resume_required:
         events.add(car.CarEvent.EventName.stoppedWaitForGas)
       elif not steer_paused and self.CS.lkMode and not self.CS.resume_required:
-        events.add(car.CarEvent.EventName.belowSteerSpeed)'''
+        events.add(car.CarEvent.EventName.belowSteerSpeed) '''
     if self.CS.autoHoldActivated:
       self.CS.lastAutoHoldTime = t
       events.add(car.CarEvent.EventName.autoHoldActivated)

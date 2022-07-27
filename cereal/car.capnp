@@ -122,6 +122,8 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     pauseLongOnGasPress @113;
     stoppedWaitForGas @114;
     buttonMainCancel @115;
+    signalLost @118;
+    signalRestored @119;
     #Road speed Limiter
     slowingDownSpeed @116;
     slowingDownSpeedSound @117;
