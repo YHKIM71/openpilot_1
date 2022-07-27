@@ -247,7 +247,6 @@ class CarController():
             if actuators.accel - gravity_x > 0.05: # desired accel must be enough to overcome hill
               acc_enabled = False
               CS.resume_button_pressed = True
-
           elif CS.out.vEgo < 1.5:
             CS.resume_required = True
       

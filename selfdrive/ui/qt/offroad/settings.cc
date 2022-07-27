@@ -50,10 +50,9 @@ TogglesPanel::TogglesPanel(QWidget *parent) : QWidget(parent) {
                                   "Display speed in km/h instead of mp/h.",
                                   "../assets/offroad/icon_metric.png",
                                   this));
-
   toggles.append(new ParamControl("UploadRaw",
                                   "Upload Raw Logs",
-                                  "Upload full logs and full resolution video by default while on WiFi. If not enabled, individual logs can be marked for upload at my.comma.ai/useradmin.",
+                                  "WiFi를 사용하는 동안 로그 및 풀해상도로 비디오 업로드",
                                   "../assets/offroad/icon_network.png",
                                   this));
 

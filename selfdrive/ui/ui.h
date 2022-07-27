@@ -196,6 +196,7 @@ typedef enum UIMeasure { //rearrange here to adjust order when cycling measures
   VISION_CURLATACCEL,
   VISION_MAXVFORCURCURV,
   VISION_MAXPREDLATACCEL,
+  VISION_VF,
   LANE_WIDTH,
   ROLL,
   ROLL_DEVICE,
@@ -224,12 +225,14 @@ typedef struct UIScene {
   bool speed_limit_perc_offset;
   Rect speed_limit_sign_touch_rect;
   double last_speed_limit_sign_tap;
+
+  std::string current_road_name;
   
   // adjustable lane position
   Rect lane_pos_left_touch_rect = {1,1,1,1}, lane_pos_right_touch_rect = {1,1,1,1};
   bool lane_pos_enabled = false;
   int lane_pos = 0; // 0, 1, -1 = center, left, right
-  float lane_pos_dist_short = 500.; // ≈1/3 mile short timeout
+  float lane_pos_dist_short = 800.; // ≈1/3 mile short timeout
   float lane_pos_dist_long = 16000.; // 10 mile long timeout
   float lane_pos_timeout_dist = lane_pos_dist_short;
   float lane_pos_set_t = 0.;

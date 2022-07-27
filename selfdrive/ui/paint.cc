@@ -183,7 +183,7 @@ static void draw_lead(UIState *s, const cereal::ModelDataV2::LeadDataV3::Reader 
   y = std::fmin(s->fb_h - sz * .6, y);
   draw_chevron(s, x, y, sz, nvgRGBA(201, 34, 49, fillAlpha), COLOR_YELLOW);
 
-  if (s->scene.lead_info_print_enabled && draw_info){
+  if (s->scene.lead_info_print_enabled && !s->scene.map_open && draw_info){
     // print lead info around chevron
     // Print relative distances to the left of the chevron
     int const x_offset = 100;
@@ -1488,6 +1488,13 @@ static void ui_draw_measures(UIState *s){
           }
           break;
 
+        case UIMeasure::VISION_VF: 
+          {
+            snprintf(name, sizeof(name), "V: VF");
+            snprintf(val, sizeof(val), "%.2f", scene.longitudinal_plan.getVisionVf());
+          }
+          break;
+
         default: {// invalid number
           snprintf(name, sizeof(name), "INVALID");
           snprintf(val, sizeof(val), "42");}
@@ -1658,7 +1665,7 @@ static void ui_draw_vision_event(UIState *s) {
       nvgBeginPath(s->vg);
       const int r = int(float(radius) * 1.15);
       nvgRoundedRect(s->vg, center_x - r, center_y - r, 2 * r, 2 * r, r);
-      nvgStrokeColor(s->vg, COLOR_GREEN_ALPHA(255));
+      nvgStrokeColor(s->vg, s->scene.network_strength > 0 ? COLOR_GREEN_ALPHA(255) : COLOR_RED_ALPHA(255));
       nvgFillColor(s->vg, nvgRGBA(0,0,0,0));
       nvgFill(s->vg);
       nvgStrokeWidth(s->vg, 6);
@@ -1701,6 +1708,16 @@ static void ui_draw_vision_event(UIState *s) {
       nvgFillColor(s->vg, COLOR_WHITE_ALPHA(200));
       nvgText(s->vg, x, y, s->scene.network_type_string.c_str(), NULL);
     }
+  }
+
+  // current road name
+  if (s->scene.network_strength > 0 && !s->scene.map_open){//} && s->scene.current_road_name != ""){
+    nvgBeginPath(s->vg);
+    nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_TOP);
+    nvgFontFace(s->vg, "sans-regular");
+    nvgFontSize(s->vg, 75);
+    nvgFillColor(s->vg, COLOR_WHITE_ALPHA(255));
+    nvgText(s->vg, s->fb_w / 2, bdr_s - 31, s->scene.current_road_name.c_str(), NULL);
   }
 }
 
