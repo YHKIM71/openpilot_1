@@ -240,7 +240,7 @@ def startup_master_display_fingerprint_alert(CP: car.CarParams, sm: messaging.Su
     f"UNTESTED BRANCH on {CP.carFingerprint.title()[:40]}",
     AlertStatus.normal, AlertSize.mid,
     Priority.LOWER, VisualAlert.none, AudibleAlert.none, 0., 0., 10.)
-    
+
 
 def stotime(S):
 
@@ -251,14 +251,14 @@ def stotime(S):
     return 'N/A'
   elif S < 0:
     return 'N/A'
-    
-  
+
+
   M = 60
   H = M * 60
-  
+
   h,S = divmod(S,H)
   m,S = divmod(S,M)
-  
+
   if h > 0:
     return f"{h:02d}:{m:02d}:{S:02d}"
   else:
@@ -577,7 +577,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
       AlertStatus.userPrompt, AlertSize.mid,
       Priority.LOW, VisualAlert.steerRequired, AudibleAlert.chimePrompt, 1., 1., 1.),
   },
-  
+
   EventName.resumeRequired: {
     ET.WARNING: Alert(
       "Go time!",
@@ -969,9 +969,14 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
   },
 
   EventName.autoHoldActivated: {
-    ET.PERMANENT: autohold_alert,
+    ET.PERMANENT: Alert(
+      "AutoHold Activated",
+      "You can rest your foot now.",
+      AlertStatus.normal, AlertSize.none,
+      Priority.LOWER, VisualAlert.none, AudibleAlert.chimeAutoHoldOn, 3., 0., 0.),
+    #ET.PERMANENT: autohold_alert,
   },
-  
+
   EventName.stoppedWaitForGas: {
     ET.PERMANENT: stopped_alert,
   },

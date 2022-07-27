@@ -30,6 +30,7 @@ public:
         {AudibleAlert::CHIME_WARNING_REPEAT, sound_asset_path + "warning_repeat.wav", true},
         {AudibleAlert::CHIME_ERROR, sound_asset_path + "error.wav", false},
         {AudibleAlert::CHIME_PROMPT, sound_asset_path + "error.wav", false},
+        {AudibleAlert::CHIME_AUTO_HOLD_ON, sound_asset_path + "autoholdon.wav", false},
         {AudibleAlert::CHIME_SLOWING_DOWN_SPEED, sound_asset_path + "slowing_down_speed.wav", false}
       };
       for (auto &[alert, fn, loops] : sound_list) {
@@ -50,6 +51,7 @@ public:
         {AudibleAlert::CHIME_WARNING_REPEAT, sound_asset_path + "warning_repeat_cust.wav", true},
         {AudibleAlert::CHIME_ERROR, sound_asset_path + "error_cust.wav", false},
         {AudibleAlert::CHIME_PROMPT, sound_asset_path + "error_cust.wav", false},
+        {AudibleAlert::CHIME_AUTO_HOLD_ON, sound_asset_path + "autoholdon.wav", false},
         {AudibleAlert::CHIME_SLOWING_DOWN_SPEED, sound_asset_path + "slowing_down_speed.wav", false}
       };
       for (auto &[alert, fn, loops] : sound_list) {
@@ -105,7 +107,7 @@ private slots:
           s->stop();
         }
       }
-      
+
       for (auto &[s, loops] : customSounds) {
         // Only stop repeating sounds
         if (s->loopsRemaining() == QSoundEffect::Infinite) {
@@ -130,7 +132,7 @@ private slots:
       }
     }
   }
-  
+
   bool shouldPlaySound(Alert a) {
     bool silentEngageDisengage = Params().getBool("SilentEngageDisengage");
     return !silentEngageDisengage || (a.sound != AudibleAlert::CHIME_ENGAGE && a.sound != AudibleAlert::CHIME_DISENGAGE);
