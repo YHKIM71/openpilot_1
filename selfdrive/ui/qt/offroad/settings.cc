@@ -100,14 +100,19 @@ TogglesPanel::TogglesPanel(QWidget *parent) : QWidget(parent) {
                                   "지도 데이터의 속도제한 정보와 차량 인터페이스 정보를 사용하여 자동으로 크루즈 속도를 도로 제한속도에 적용시킴.",
                                   "../assets/offroad/icon_speed_limit_sign.png",
                                   this));
+  toggles.append(new ParamControl("EUSpeedLimitStyle",
+                                  "Show EU style speed limit sign",
+                                  "If enabled, show EU style circular sign. If disabled, show US/Canada style rectangular sign.",
+                                  "../assets/offroad/icon_speed_limit_sign.png",
+                                  this));
   toggles.append(new ParamControl("SpeedLimitPercOffset",
                                   "Enable Speed Limit Offset",
                                   "보다 자연스러운 드라이브를 위해 실제 속도 제한보다 약간 높은 속도제한을 설정.",
                                   "../assets/offroad/icon_speed_limit_percent.png",
                                   this));
   toggles.append(new ParamControl("StockSpeedAdjust",
-                                  "순정 크루즈속도 설정",
-                                  "엑셀/디셀 버튼을 짧게/길게(1kph/5kph) 누름.",
+                                  "순정 크루즈속와 반대로 설정",
+                                  "순정동작의 반대로, 가속/감속 버튼을 짧게/길게 누르면 5mph/1mph씩 변경됩니다.",
                                   "../assets/offroad/icon_stock_adjust_speed.png",
                                   this));
   toggles.append(new ParamControl("CruiseSpeedOffset",
