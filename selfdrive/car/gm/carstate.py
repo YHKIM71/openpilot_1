@@ -326,7 +326,6 @@ class CarState(CarStateBase):
         self.one_pedal_mode_engage_on_gas_enabled = False
         self._params.put_bool("OnePedalModeEngageOnGas", False)
 
-    
     cruise_enabled = self.pcm_acc_status != AccState.OFF
     ret.cruiseState.enabled = cruise_enabled
     ret.cruiseState.standstill = False

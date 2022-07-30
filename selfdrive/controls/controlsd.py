@@ -32,7 +32,7 @@ from selfdrive.hardware import HARDWARE, TICI, EON
 from selfdrive.manager.process_config import managed_processes
 from selfdrive.road_speed_limiter import road_speed_limiter_get_max_speed
 
-LDW_MIN_SPEED = 31 * CV.MPH_TO_MS
+LDW_MIN_SPEED = 30 * CV.MPH_TO_MS
 LANE_DEPARTURE_THRESHOLD = 0.1
 STEER_ANGLE_SATURATION_TIMEOUT = 1.0 / DT_CTRL
 STEER_ANGLE_SATURATION_THRESHOLD = 2.5  # Degrees

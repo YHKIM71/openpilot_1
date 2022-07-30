@@ -12,7 +12,7 @@ from selfdrive.controls.lib.vehicle_model import VehicleModel
 from selfdrive.swaglog import cloudlog
 
 
-_MIN_V = 5.6  # Do not operate under 20km/h
+_MIN_V = 5.6  #Do not operate under 20km/h
 
 _ENTERING_PRED_LAT_ACC_TH = 1.6  # Predicted Lat Acc threshold to trigger entering turn state.
 _ABORT_ENTERING_PRED_LAT_ACC_TH = 0.9  # Predicted Lat Acc threshold to abort entering state if speed drops.

@@ -453,7 +453,7 @@ class CarInterface(CarInterfaceBase):
       if ret.standstill and cruiseEnabled and not ret.brakePressed and not self.CS.pause_long_on_gas_press and not self.CS.autoHoldActivated and not self.CS.disengage_on_gas and t - self.CS.sessionInitTime > 10. and not self.CS.resume_required:
         events.add(car.CarEvent.EventName.stoppedWaitForGas)
       elif not steer_paused and self.CS.lkMode and not self.CS.resume_required:
-        events.add(car.CarEvent.EventName.belowSteerSpeed) '''
+        events.add(car.CarEvent.EventName.belowSteerSpeed)'''
     if self.CS.autoHoldActivated:
       self.CS.lastAutoHoldTime = t
       events.add(car.CarEvent.EventName.autoHoldActivated)
