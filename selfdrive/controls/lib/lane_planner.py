@@ -20,7 +20,6 @@ else:
   PATH_OFFSET = 0.0
 
 LANE_WIDTH_DEFAULT = 3.7
-
 class LaneOffset: 
   OFFSET = 0.11 # [unitless] offset of the left/right positions as factor of current lane width
   OFFSET_MAX = 0.8 # [m]
