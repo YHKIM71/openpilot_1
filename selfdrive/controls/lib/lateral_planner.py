@@ -332,5 +332,9 @@ class LateralPlanner():
     plan_send.lateralPlan.laneWidthMeanRightAdjacent = self.LP.lane_offset._lane_width_mean_right_adjacent
     plan_send.lateralPlan.shoulderMeanWidthLeft = self.LP.lane_offset._shoulder_width_mean_left
     plan_send.lateralPlan.shoulderMeanWidthRight = self.LP.lane_offset._shoulder_width_mean_right
+    if self.LP.lane_offset.offset == -1. and self.lane_pos != -1.:
+      Params().put("LanePosition", "-1")
+    elif self.LP.lane_offset.offset == 1. and self.lane_pos != 1.:
+      Params().put("LanePosition", "1")
 
     pm.send('lateralPlan', plan_send)

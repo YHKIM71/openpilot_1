@@ -95,19 +95,19 @@ class LaneOffset:
           l_prob *= l_std_mod
           r_prob *= r_std_mod
           
-        if i == 0: # set left adjacent 
-          self._lane_probs[0] = l_prob
-          self._lane_width_mean_left_adjacent = np.mean(rll_y - lll_y)
-          if self._road_edge_probs[0] > 0.:
-            self._shoulder_width_mean_left = np.mean(lll_y - md.roadEdges[0].y)
-        elif i == 1: # set center
-          self._lane_probs[1] = l_prob
-          self._lane_probs[2] = r_prob
-        else: # set right 
-          self._lane_probs[3] = r_prob
-          self._lane_width_mean_right_adjacent = np.mean(rll_y - lll_y)
-          if self._road_edge_probs[1] > 0.:
-            self._shoulder_width_mean_right = np.mean(lll_y - md.roadEdges[1].y)
+          if i == 0: # set left adjacent 
+            self._lane_probs[0] = l_prob
+            self._lane_width_mean_left_adjacent = np.mean(rll_y - lll_y)
+            if self._road_edge_probs[0] > 0.:
+              self._shoulder_width_mean_left = np.mean(lll_y - md.roadEdges[0].y)
+          elif i == 1: # set center
+            self._lane_probs[1] = l_prob
+            self._lane_probs[2] = r_prob
+          else: # set right 
+            self._lane_probs[3] = r_prob
+            self._lane_width_mean_right_adjacent = np.mean(rll_y - lll_y)
+            if self._road_edge_probs[1] > 0.:
+              self._shoulder_width_mean_right = np.mean(lll_y - md.roadEdges[1].y)
 
       
       # see if adjacent lane can be treated as shoulder because it's too narrow
@@ -136,7 +136,7 @@ class LaneOffset:
     return lane_pos_auto
     
   def update(self, lane_pos=0., lane_width=LANE_WIDTH_DEFAULT, auto_active=False, md=None, sm=None): # 0., 1., -1. = center, left, right
-    if md is not None and self._sm is not None:
+    if md is not None and sm is not None:
       if sm.valid.get('carState', False):
         self._cs = sm['carState']
       if sm.valid.get('longitudinalPlan', False):
@@ -164,7 +164,7 @@ class LaneOffset:
     return clip(self.offset, -self.OFFSET_MAX, self.OFFSET_MAX)
 
 class LanePlanner:
-  def __init__(self, wide_camera=False, mass=0., sm=None):
+  def __init__(self, wide_camera=False, mass=0.):
     self.ll_t = np.zeros((TRAJECTORY_SIZE,))
     self.ll_x = np.zeros((TRAJECTORY_SIZE,))
     self.lll_y = np.zeros((TRAJECTORY_SIZE,))
@@ -172,7 +172,7 @@ class LanePlanner:
     self.lane_width_estimate = FirstOrderFilter(LANE_WIDTH_DEFAULT, 9.95, DT_MDL)
     self.lane_width_certainty = FirstOrderFilter(1.0, 0.95, DT_MDL)
     self.lane_width = LANE_WIDTH_DEFAULT
-    self.lane_offset = LaneOffset(mass, sm)
+    self.lane_offset = LaneOffset(mass)
 
     self.lll_prob = 0.
     self.rll_prob = 0.

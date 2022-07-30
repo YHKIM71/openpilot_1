@@ -198,6 +198,8 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
     if (QUIState::ui_state.scene.auto_lane_pos_active){
       QUIState::ui_state.scene.auto_lane_pos_active = false;
       Params().putBool("AutoLanePositionActive", false);
+      QUIState::ui_state.scene.lane_pos = 0;
+      Params().put("LanePosition", "0", 1);
     }
     else{
       if (QUIState::ui_state.scene.lane_pos == 1){
@@ -213,6 +215,8 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
         // activate auto mode
         QUIState::ui_state.scene.auto_lane_pos_active = true;
         Params().putBool("AutoLanePositionActive", true);
+        QUIState::ui_state.scene.lane_pos = 0;
+        Params().put("LanePosition", "0", 1);
       }
       else{
         QUIState::ui_state.scene.lane_pos = 1;
@@ -228,6 +232,8 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
     if (QUIState::ui_state.scene.auto_lane_pos_active){
       QUIState::ui_state.scene.auto_lane_pos_active = false;
       Params().putBool("AutoLanePositionActive", false);
+      QUIState::ui_state.scene.lane_pos = 0;
+      Params().put("LanePosition", "0", 1);
     }
     else{
       if (QUIState::ui_state.scene.lane_pos == -1){
@@ -243,6 +249,8 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
         // activate auto mode
         QUIState::ui_state.scene.auto_lane_pos_active = true;
         Params().putBool("AutoLanePositionActive", true);
+        QUIState::ui_state.scene.lane_pos = 0;
+        Params().put("LanePosition", "0", 1);
       }
       else{
         QUIState::ui_state.scene.lane_pos = -1;
