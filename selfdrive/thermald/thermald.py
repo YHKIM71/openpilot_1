@@ -442,7 +442,7 @@ def thermald_thread():
       msg.deviceState.batteryStatus = "Charging"
 
 
-    msg.deviceState.chargingDisabled = charging_disabled #to this line
+    msg.deviceState.chargingDisabled = charging_disabled # to this line
 
     # Offroad power monitoring
     power_monitor.calculate(pandaState)

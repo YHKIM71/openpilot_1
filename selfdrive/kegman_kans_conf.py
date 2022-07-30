@@ -67,7 +67,7 @@ class kegman_kans_conf():
 
     else:
       self.config = {"battChargeMin":"65", "battChargeMax":"85", "wheelTouchSeconds":"18000", \
-                     "battPercOff":"60", "carVoltageMinEonShutdown":"12000", \
+                     "battPercOff":"55", "carVoltageMinEonShutdown":"12000", \
                      "brakeStoppingTarget":"0.65", "tuneGernby":"1", "AutoHold":"1", "steerLimitTimer":"5.0", \
                      "STOPPING_DISTANCE":"2.0", "CruiseDelta":"5", \
                      "CruiseEnableMin":"10", "epsModded": "0", "CAMERA_SPEED_FACTOR":"0.99"}
