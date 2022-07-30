@@ -240,6 +240,7 @@ typedef struct UIScene {
   float lane_pos_dist_since_set = 0.;
   float lane_pos_dist_last_t = 0.;
   float lane_pos_max_steer_deg = 150.;
+  bool auto_lane_pos_active = false;
   
   Rect wheel_touch_rect;
   bool wheel_rotates = true;
