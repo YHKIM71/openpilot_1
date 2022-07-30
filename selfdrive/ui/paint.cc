@@ -1888,13 +1888,13 @@ static void draw_lane_pos_buttons(UIState *s) {
     s->scene.lane_pos_left_touch_rect = {left_x - radius, y - radius, 2 * radius, 2 * radius};
     int radius_inner = 0;
     if (s->scene.lane_pos == 1){
-      radius_inner = int(float(s->scene.lane_pos_timeout_dist - s->scene.lane_pos_dist_since_set) / float(s->scene.lane_pos_timeout_dist) * float(radius));
+      radius_inner = s->scene.auto_lane_pos_active ? radius : int(float(s->scene.lane_pos_timeout_dist - s->scene.lane_pos_dist_since_set) / float(s->scene.lane_pos_timeout_dist) * float(radius));
       if (radius_inner < 1){
         radius_inner = 1;
       }
       nvgBeginPath(s->vg);
       nvgRoundedRect(s->vg, left_x - radius_inner, y - radius_inner, 2 * radius_inner, 2 * radius_inner, radius_inner);
-      nvgFillColor(s->vg, COLOR_WHITE_ALPHA(200));
+      nvgFillColor(s->vg, s->scene.auto_lane_pos_active ? COLOR_BLUE_ALPHA(100) : COLOR_WHITE_ALPHA(200));
       nvgFill(s->vg);
       ui_draw_circle_image(s, left_x, y, radius, "lane_pos_left", COLOR_BLACK_ALPHA(80), 1.0);
     }
@@ -1902,11 +1902,11 @@ static void draw_lane_pos_buttons(UIState *s) {
       ui_draw_circle_image(s, left_x, y, radius, "lane_pos_left", COLOR_BLACK_ALPHA(80), 0.4);
     }
     
-    if (s->scene.lane_pos == 1){
+    if (s->scene.lane_pos == 1 || s->scene.auto_lane_pos_active){
       // outline of button when active
       nvgBeginPath(s->vg);
       nvgRoundedRect(s->vg, left_x - radius, y - radius, 2 * radius, 2 * radius, radius);
-      nvgStrokeColor(s->vg, COLOR_WHITE_ALPHA(200));
+      nvgStrokeColor(s->vg, s->scene.auto_lane_pos_active ? COLOR_BLUE_ALPHA(100) : COLOR_WHITE_ALPHA(200));
       nvgStroke(s->vg);
     }
     
@@ -1914,20 +1914,20 @@ static void draw_lane_pos_buttons(UIState *s) {
     s->scene.lane_pos_right_touch_rect = {right_x - radius, y - radius, 2 * radius, 2 * radius};
     radius_inner = 0;
     if (s->scene.lane_pos == -1){
-      radius_inner = int(float(s->scene.lane_pos_timeout_dist - s->scene.lane_pos_dist_since_set) / float(s->scene.lane_pos_timeout_dist) * float(radius));
+      radius_inner = s->scene.auto_lane_pos_active ? radius : int(float(s->scene.lane_pos_timeout_dist - s->scene.lane_pos_dist_since_set) / float(s->scene.lane_pos_timeout_dist) * float(radius));
       if (radius_inner < 1){
         radius_inner = 1;
       }
       nvgBeginPath(s->vg);
       nvgRoundedRect(s->vg, right_x - radius_inner, y - radius_inner, 2 * radius_inner, 2 * radius_inner, radius_inner);
-      nvgFillColor(s->vg, COLOR_WHITE_ALPHA(200));
+      nvgFillColor(s->vg, s->scene.auto_lane_pos_active ? COLOR_BLUE_ALPHA(100) : COLOR_WHITE_ALPHA(200));
       nvgFill(s->vg);
       ui_draw_circle_image(s, right_x, y, radius, "lane_pos_right", COLOR_BLACK_ALPHA(80), 1.0);
     }
     else{
       ui_draw_circle_image(s, right_x, y, radius, "lane_pos_right", COLOR_BLACK_ALPHA(80), 0.4);
     }
-    if (s->scene.lane_pos == -1){
+    if (s->scene.lane_pos == -1 || s->scene.auto_lane_pos_active){
       // outline of button when active
       nvgBeginPath(s->vg);
       nvgRoundedRect(s->vg, right_x - radius, y - radius, 2 * radius, 2 * radius, radius);

@@ -12,7 +12,7 @@ from selfdrive.controls.lib.vehicle_model import VehicleModel
 from selfdrive.swaglog import cloudlog
 
 
-_MIN_V = 5.6  # Do not operate under 20km/h
+_MIN_V = 5.6  #Do not operate under 20km/h
 
 _ENTERING_PRED_LAT_ACC_TH = 1.6  # Predicted Lat Acc threshold to trigger entering turn state.
 _ABORT_ENTERING_PRED_LAT_ACC_TH = 0.9  # Predicted Lat Acc threshold to abort entering state if speed drops.
@@ -27,7 +27,7 @@ _EVAL_START = 20.  # mts. Distance ahead where to start evaluating vision curvat
 _EVAL_LENGHT = 150.  # mts. Distance ahead where to stop evaluating vision curvature.
 _EVAL_RANGE = np.arange(_EVAL_START, _EVAL_LENGHT, _EVAL_STEP)
 
-_A_LAT_REG_MAX = 1.7  # Maximum lateral acceleration
+_A_LAT_REG_MAX = 2.2  # Maximum lateral acceleration
 
 # Lookup table for the minimum smooth deceleration during the ENTERING state
 # depending on the actual maximum absolute lateral acceleration predicted on the turn ahead.
