@@ -577,7 +577,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
       AlertStatus.userPrompt, AlertSize.mid,
       Priority.LOW, VisualAlert.steerRequired, AudibleAlert.chimePrompt, 1., 1., 1.),
   },
-  
+
   EventName.signalLost: {
     ET.WARNING: Alert(
       "Data signal lost",
@@ -593,7 +593,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
       AlertStatus.normal, AlertSize.small,
       Priority.LOW, VisualAlert.steerRequired, AudibleAlert.chimeWarning1, 1., 1., 5.),
   },
-  
+
   EventName.resumeRequired: {
     ET.WARNING: Alert(
       "Go time!",
@@ -990,7 +990,6 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
       "You can rest your foot now.",
       AlertStatus.normal, AlertSize.none,
       Priority.LOWER, VisualAlert.none, AudibleAlert.chimeAutoHoldOn, 3., 0., 0.),
-    #ET.PERMANENT: autohold_alert,
   },
 
   EventName.stoppedWaitForGas: {

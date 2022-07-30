@@ -43,20 +43,20 @@ class CarInterface(CarInterfaceBase):
   params_check_last_t = 0.
   params_check_freq = 0.1 # check params at 10Hz
   params = CarControllerParams()
-  
+
   @staticmethod
   def get_pid_accel_limits(CP, current_speed, cruise_speed, CI = None):
     following = CI.CS.coasting_lead_d > 0. and CI.CS.coasting_lead_d < 45.0 and CI.CS.coasting_lead_v > current_speed
     accel_limits = calc_cruise_accel_limits(current_speed, following, CI.CS.accel_mode)
-    
+
     # decrease min accel as necessary based on lead conditions
     stock_min_factor = interp(current_speed - CI.CS.coasting_lead_v, _A_MIN_V_STOCK_FACTOR_BP, _A_MIN_V_STOCK_FACTOR_V) if CI.CS.coasting_lead_d > 0. else 0.
     accel_limits[0] = stock_min_factor * CI.params.ACCEL_MIN + (1. - stock_min_factor) * accel_limits[0]
-    
+
     time_since_engage = CI.CS.t - CI.CS.cruise_enabled_last_t
     if CI.CS.coasting_lead_d > 0. and time_since_engage < CI.CS.cruise_enabled_neg_accel_ramp_bp[-1]:
       accel_limits[0] *= interp(time_since_engage, CI.CS.cruise_enabled_neg_accel_ramp_bp, CI.CS.cruise_enabled_neg_accel_ramp_v)
-      
+
     return [max(CI.params.ACCEL_MIN, accel_limits[0]), min(accel_limits[1], CI.params.ACCEL_MAX)]
 
   # Volt determined by iteratively plotting and minimizing error for f(angle, speed) = steer.
@@ -70,7 +70,7 @@ class CarInterface(CarInterfaceBase):
     SIGMOID_COEF_LEFT = 0.00101873
     SPEED_COEF = 0.36844505
     return get_steer_feedforward_sigmoid1(desired_angle, v_ego, ANGLE_COEF, ANGLE_COEF2, ANGLE_OFFSET, SPEED_OFFSET, SIGMOID_COEF_RIGHT, SIGMOID_COEF_LEFT, SPEED_COEF)
-  
+
   # Volt determined by iteratively plotting and minimizing error for f(angle, speed) = steer.
   @staticmethod
   def get_steer_feedforward_acadia_torque(desired_lateral_accel, v_ego):
@@ -82,7 +82,7 @@ class CarInterface(CarInterfaceBase):
     SIGMOID_COEF_LEFT = 0.44546354
     SPEED_COEF = 0.78390078
     return get_steer_feedforward_erf(desired_lateral_accel, v_ego, ANGLE_COEF, ANGLE_COEF2, ANGLE_OFFSET, SPEED_OFFSET, SIGMOID_COEF_RIGHT, SIGMOID_COEF_LEFT, SPEED_COEF)
-  
+
   @staticmethod
   def get_steer_feedforward_volt(desired_angle, v_ego):
     ANGLE_COEF = 1.23514093
@@ -93,7 +93,7 @@ class CarInterface(CarInterfaceBase):
     SIGMOID_COEF_LEFT = 0.00168327
     SPEED_COEF = 0.16283995
     return get_steer_feedforward_sigmoid1(desired_angle, v_ego, ANGLE_COEF, ANGLE_COEF2, ANGLE_OFFSET, SPEED_OFFSET, SIGMOID_COEF_RIGHT, SIGMOID_COEF_LEFT, SPEED_COEF)
-  
+
   # Volt determined by iteratively plotting and minimizing error for f(angle, speed) = steer.
   @staticmethod
   def get_steer_feedforward_volt_torque(desired_lateral_accel, v_ego):
@@ -113,7 +113,7 @@ class CarInterface(CarInterfaceBase):
       return self.get_steer_feedforward_acadia
     else:
       return CarInterfaceBase.get_steer_feedforward_default
-  
+
   def get_steer_feedforward_function_torque(self):
     if self.CP.carFingerprint in [CAR.VOLT, CAR.VOLT18]:
       return self.get_steer_feedforward_volt_torque
@@ -142,7 +142,7 @@ class CarInterface(CarInterfaceBase):
     # or camera is on powertrain bus (LKA cars without ACC).
     ret.openpilotLongitudinalControl = True
     tire_stiffness_factor = 0.444  # not optimized yet
-    
+
     ret.longitudinalActuatorDelayLowerBound = 0.41
     ret.longitudinalActuatorDelayUpperBound = 0.41
 
@@ -190,7 +190,7 @@ class CarInterface(CarInterfaceBase):
         ret.lateralTuning.pid.kdBP = [0.]
         ret.lateralTuning.pid.kdV = [0.6]
         ret.lateralTuning.pid.kf = 1. # !!! ONLY for sigmoid feedforward !!!
-      
+
 
       # Only tuned to reduce oscillations. TODO.
       ret.longitudinalTuning.kpBP = [5., 15., 35.]
@@ -296,7 +296,7 @@ class CarInterface(CarInterfaceBase):
     # TODO: start from empirically derived lateral slip stiffness for the civic and scale by
     # mass and CG position, so all cars will have approximately similar dyn behaviors
     ret.tireStiffnessFront, ret.tireStiffnessRear = scale_tire_stiffness(ret.mass, ret.wheelbase, ret.centerToFront, tire_stiffness_factor=tire_stiffness_factor)
-    
+
     return ret
 
   # returns a car.CarState
@@ -349,7 +349,7 @@ class CarInterface(CarInterfaceBase):
     if cruiseEnabled and self.CS.lka_button and self.CS.lka_button != self.CS.prev_lka_button:
       self.CS.lkMode = not self.CS.lkMode
       cloudlog.info("button press event: LKA button. new value: %i" % self.CS.lkMode)
-    
+
     if t - self.params_check_last_t >= self.params_check_freq:
       self.params_check_last_t = t
       self.one_pedal_mode = self.CS._params.get_bool("OnePedalMode")
@@ -449,11 +449,11 @@ class CarInterface(CarInterfaceBase):
       if not ret.standstill and self.CS.lkMode and self.CS.lane_change_steer_factor < 1.:
         events.add(car.CarEvent.EventName.blinkerSteeringPaused)
         steer_paused = True
-    '''if ret.vEgo < self.CP.minSteerSpeed:
+    ''' if ret.vEgo < self.CP.minSteerSpeed:
       if ret.standstill and cruiseEnabled and not ret.brakePressed and not self.CS.pause_long_on_gas_press and not self.CS.autoHoldActivated and not self.CS.disengage_on_gas and t - self.CS.sessionInitTime > 10. and not self.CS.resume_required:
         events.add(car.CarEvent.EventName.stoppedWaitForGas)
       elif not steer_paused and self.CS.lkMode and not self.CS.resume_required:
-        events.add(car.CarEvent.EventName.belowSteerSpeed)'''
+        events.add(car.CarEvent.EventName.belowSteerSpeed) '''
     if self.CS.autoHoldActivated:
       self.CS.lastAutoHoldTime = t
       events.add(car.CarEvent.EventName.autoHoldActivated)
@@ -509,7 +509,7 @@ class CarInterface(CarInterfaceBase):
       and not self.CS.one_pedal_mode_active and not self.CS.coast_one_pedal_mode_active \
       and (self.CS.one_pedal_mode_active_last or self.CS.coast_one_pedal_mode_active_last):
         hud_v_cruise = max(self.CS.one_pedal_v_cruise_kph_last, hud_v_cruise)
-    
+
     can_sends = self.CC.update(enabled, self.CS, self.frame,
                                c.actuators,
                                hud_v_cruise, c.hudControl.lanesVisible,

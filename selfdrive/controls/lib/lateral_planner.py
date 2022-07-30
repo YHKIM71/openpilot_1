@@ -322,7 +322,7 @@ class LateralPlanner():
     plan_send.lateralPlan.dPathWLinesY = [float(y) for y in self.d_path_w_lines_xyz[:, 1]]
     
     plan_send.lateralPlan.lanelessMode = bool(self.laneless_mode_status)
-    
+
     plan_send.lateralPlan.autoLanePositionActive = bool(self.LP.lane_offset._auto_is_active)
     plan_send.lateralPlan.lanePosition = log.LateralPlan.LanePosition.left if self.LP.lane_offset.lane_pos == 1. \
                                     else log.LateralPlan.LanePosition.right if self.LP.lane_offset.lane_pos == -1. \
