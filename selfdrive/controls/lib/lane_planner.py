@@ -7,6 +7,7 @@ from selfdrive.hardware import EON, TICI
 from selfdrive.swaglog import cloudlog
 from enum import Enum
 
+ENABLE_INC_LANE_PROB = True
 TRAJECTORY_SIZE = 33
 # camera offset is meters from center car to camera
 if EON:
@@ -113,6 +114,11 @@ class LanePlanner:
     path_from_right_lane = self.rll_y - clipped_lane_width / 2.0
 
     self.d_prob = l_prob + r_prob - l_prob * r_prob
+
+    # neokii
+    if ENABLE_INC_LANE_PROB and self.d_prob > 0.65:
+      self.d_prob = min(self.d_prob * 1.3, 1.0)
+
     lane_path_y = (l_prob * path_from_left_lane + r_prob * path_from_right_lane) / (l_prob + r_prob + 0.0001)
     safe_idxs = np.isfinite(self.ll_t)
     if safe_idxs[0]:
