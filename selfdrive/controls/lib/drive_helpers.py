@@ -58,8 +58,8 @@ def set_v_cruise_offset(do_offset):
   else:
     V_CRUISE_OFFSET = 0
 
-def update_v_cruise(v_cruise_kph, buttonEvents, enabled, cur_time, accel_pressed,decel_pressed,accel_pressed_last,decel_pressed_last, fastMode, stock_speed_adjust, vEgo_kph, gas_pressed):
-  
+def update_v_cruise(v_cruise_kph, buttonEvents, enabled, cur_time, accel_pressed, decel_pressed, accel_pressed_last, decel_pressed_last, fastMode, stock_speed_adjust, vEgo_kph, gas_pressed):
+
   if stock_speed_adjust:
     if enabled:
       if accel_pressed:
@@ -81,7 +81,7 @@ def update_v_cruise(v_cruise_kph, buttonEvents, enabled, cur_time, accel_pressed
                 else:
                   v_cruise_kph -= 1
       v_cruise_kph = clip(v_cruise_kph, V_CRUISE_MIN, V_CRUISE_MAX)
-  else:    
+  else:
     if enabled:
       if accel_pressed:
         if ((cur_time-accel_pressed_last) >= 0.6667 or (fastMode and (cur_time-accel_pressed_last) >= 0.5)):
