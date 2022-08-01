@@ -422,8 +422,8 @@ static void ui_draw_vision_lane_lines(UIState *s) {
       }
       else{
         track_bg = nvgLinearGradient(s->vg, s->fb_w, s->fb_h, s->fb_w, s->fb_h * .4,
-                                  nvgRGBA(0, 100, 255, 255), 
-                                  nvgRGBA(0, 100, 255, 0));
+                                  COLOR_GRACE_BLUE_ALPHA(255), 
+                                  COLOR_GRACE_BLUE_ALPHA(0));
       }
     }
   } else {
@@ -433,6 +433,44 @@ static void ui_draw_vision_lane_lines(UIState *s) {
   }
   // paint path
   ui_draw_line(s, scene.track_vertices, nullptr, &track_bg);
+
+  // print lane and shoulder widths and probabilities
+  if (s->scene.show_debug_ui){
+    auto l_probs = s->scene.lateral_plan.getLaneProbs();
+    auto road_edge_probs = s->scene.lateral_plan.getRoadEdgeProbs();
+    if (l_probs.size() == 4 && road_edge_probs.size() == 2){
+      const int width_font_size = 25;
+      char cstr[6];
+      int y = s->fb_h - footer_h / 2;
+      nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
+
+      // current lane
+      snprintf(cstr, sizeof(cstr), "(%.1f) %.1f (%.1f)", l_probs[1], s->scene.lateral_plan.getLaneWidth(), l_probs[2]);
+      ui_draw_text(s, s->fb_w / 2, y, cstr, width_font_size * 2.5, COLOR_WHITE, "sans-bold");
+      // left adjacent lane
+      if (1||s->scene.lateral_plan.getLaneWidthMeanLeftAdjacent() > 0.){
+        snprintf(cstr, sizeof(cstr), "(%.1f) %.1f", l_probs[0], s->scene.lateral_plan.getLaneWidthMeanLeftAdjacent());
+        ui_draw_text(s, s->fb_w / 6, y, cstr, width_font_size * 2.5, COLOR_WHITE, "sans-bold");
+      }
+      // right adjacent lane
+      if (1||s->scene.lateral_plan.getLaneWidthMeanRightAdjacent() > 0.){
+        snprintf(cstr, sizeof(cstr), "%.1f (%.1f)", s->scene.lateral_plan.getLaneWidthMeanRightAdjacent(), l_probs[3]);
+        ui_draw_text(s, 5 * s->fb_w / 6, y, cstr, width_font_size * 2.5, COLOR_WHITE, "sans-bold");
+      }
+      // left shoulder
+      nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
+      if (1||s->scene.lateral_plan.getShoulderMeanWidthLeft() > 0.){
+        snprintf(cstr, sizeof(cstr), "(%.1f) %.1f", road_edge_probs[0], s->scene.lateral_plan.getShoulderMeanWidthLeft());
+        ui_draw_text(s, 50, y, cstr, width_font_size * 2.5, COLOR_RED, "sans-bold");
+      }    
+      // right shoulder
+      nvgTextAlign(s->vg, NVG_ALIGN_RIGHT | NVG_ALIGN_BASELINE);
+      if (1||s->scene.lateral_plan.getShoulderMeanWidthRight() > 0.){
+        snprintf(cstr, sizeof(cstr), "%.1f (%.1f)", s->scene.lateral_plan.getShoulderMeanWidthRight(), road_edge_probs[1]);
+        ui_draw_text(s, s->fb_w - 50, y, cstr, width_font_size * 2.5, COLOR_RED, "sans-bold");
+      }
+    }
+  }
 }
 
 // Draw all world space objects.
@@ -617,7 +655,12 @@ static void ui_draw_measures(UIState *s){
     // draw bounding rectangle
     nvgBeginPath(s->vg);
     nvgRoundedRect(s->vg, s->scene.measure_slots_rect.x, s->scene.measure_slots_rect.y, s->scene.measure_slots_rect.w, s->scene.measure_slots_rect.h, 20);
-    nvgStrokeColor(s->vg, nvgRGBA(200,200,200,200));
+    if (QUIState::ui_state.scene.lastTime - QUIState::ui_state.scene.measures_last_tap_t > QUIState::ui_state.scene.measures_touch_timeout){
+      nvgStrokeColor(s->vg, nvgRGBA(200,200,200,200));
+    }
+    else{
+      nvgStrokeColor(s->vg, COLOR_GRACE_BLUE_ALPHA(200));
+    }
     nvgStrokeWidth(s->vg, 6);
     nvgStroke(s->vg);
     nvgFillColor(s->vg, nvgRGBA(0,0,0,100));
@@ -1888,13 +1931,13 @@ static void draw_lane_pos_buttons(UIState *s) {
     s->scene.lane_pos_left_touch_rect = {left_x - radius, y - radius, 2 * radius, 2 * radius};
     int radius_inner = 0;
     if (s->scene.lane_pos == 1){
-      radius_inner = int(float(s->scene.lane_pos_timeout_dist - s->scene.lane_pos_dist_since_set) / float(s->scene.lane_pos_timeout_dist) * float(radius));
+      radius_inner = s->scene.auto_lane_pos_active ? radius : int(float(s->scene.lane_pos_timeout_dist - s->scene.lane_pos_dist_since_set) / float(s->scene.lane_pos_timeout_dist) * float(radius));
       if (radius_inner < 1){
         radius_inner = 1;
       }
       nvgBeginPath(s->vg);
       nvgRoundedRect(s->vg, left_x - radius_inner, y - radius_inner, 2 * radius_inner, 2 * radius_inner, radius_inner);
-      nvgFillColor(s->vg, COLOR_WHITE_ALPHA(200));
+      nvgFillColor(s->vg, s->scene.auto_lane_pos_active ? COLOR_GRACE_BLUE_ALPHA(100) : COLOR_WHITE_ALPHA(200));
       nvgFill(s->vg);
       ui_draw_circle_image(s, left_x, y, radius, "lane_pos_left", COLOR_BLACK_ALPHA(80), 1.0);
     }
@@ -1902,11 +1945,14 @@ static void draw_lane_pos_buttons(UIState *s) {
       ui_draw_circle_image(s, left_x, y, radius, "lane_pos_left", COLOR_BLACK_ALPHA(80), 0.4);
     }
     
-    if (s->scene.lane_pos == 1){
+    if (s->scene.lane_pos == 1 || s->scene.auto_lane_pos_active){
       // outline of button when active
       nvgBeginPath(s->vg);
       nvgRoundedRect(s->vg, left_x - radius, y - radius, 2 * radius, 2 * radius, radius);
-      nvgStrokeColor(s->vg, COLOR_WHITE_ALPHA(200));
+      if (s->scene.auto_lane_pos_active){
+        nvgStrokeWidth(s->vg, 12);
+      }
+      nvgStrokeColor(s->vg, s->scene.auto_lane_pos_active ? COLOR_GRACE_BLUE_ALPHA(100) : COLOR_WHITE_ALPHA(200));
       nvgStroke(s->vg);
     }
     
@@ -1914,24 +1960,27 @@ static void draw_lane_pos_buttons(UIState *s) {
     s->scene.lane_pos_right_touch_rect = {right_x - radius, y - radius, 2 * radius, 2 * radius};
     radius_inner = 0;
     if (s->scene.lane_pos == -1){
-      radius_inner = int(float(s->scene.lane_pos_timeout_dist - s->scene.lane_pos_dist_since_set) / float(s->scene.lane_pos_timeout_dist) * float(radius));
+      radius_inner = s->scene.auto_lane_pos_active ? radius : int(float(s->scene.lane_pos_timeout_dist - s->scene.lane_pos_dist_since_set) / float(s->scene.lane_pos_timeout_dist) * float(radius));
       if (radius_inner < 1){
         radius_inner = 1;
       }
       nvgBeginPath(s->vg);
       nvgRoundedRect(s->vg, right_x - radius_inner, y - radius_inner, 2 * radius_inner, 2 * radius_inner, radius_inner);
-      nvgFillColor(s->vg, COLOR_WHITE_ALPHA(200));
+      nvgFillColor(s->vg, s->scene.auto_lane_pos_active ? COLOR_GRACE_BLUE_ALPHA(100) : COLOR_WHITE_ALPHA(200));
       nvgFill(s->vg);
       ui_draw_circle_image(s, right_x, y, radius, "lane_pos_right", COLOR_BLACK_ALPHA(80), 1.0);
     }
     else{
       ui_draw_circle_image(s, right_x, y, radius, "lane_pos_right", COLOR_BLACK_ALPHA(80), 0.4);
     }
-    if (s->scene.lane_pos == -1){
+    if (s->scene.lane_pos == -1 || s->scene.auto_lane_pos_active){
       // outline of button when active
       nvgBeginPath(s->vg);
       nvgRoundedRect(s->vg, right_x - radius, y - radius, 2 * radius, 2 * radius, radius);
-      nvgStrokeColor(s->vg, COLOR_WHITE_ALPHA(200));
+      if (s->scene.auto_lane_pos_active){
+        nvgStrokeWidth(s->vg, 12);
+      }
+      nvgStrokeColor(s->vg, s->scene.auto_lane_pos_active ? COLOR_GRACE_BLUE_ALPHA(100) : COLOR_WHITE_ALPHA(200));
       nvgStroke(s->vg);
     }
   }

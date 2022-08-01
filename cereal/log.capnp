@@ -965,6 +965,23 @@ struct LateralPlan @0xe1e9318e2ae8b51e {
   
   lanelessMode @31 :Bool;
 
+  autoLanePositionActive @32 :Bool;
+  lanePosition @33 :LanePosition;
+  laneOffset @38 :Float32;
+
+  laneWidthMeanLeftAdjacent @34 :Float32;
+  laneWidthMeanRightAdjacent @35 :Float32;
+  shoulderMeanWidthLeft @36 :Float32;
+  shoulderMeanWidthRight @37 :Float32;
+  laneProbs @39 :List(Float32);
+  roadEdgeProbs @40 :List(Float32);
+
+  enum LanePosition {
+    center @0;
+    left @1;
+    right @2;
+  }
+
   enum Desire {
     none @0;
     turnLeft @1;
