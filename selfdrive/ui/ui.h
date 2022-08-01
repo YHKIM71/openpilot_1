@@ -38,8 +38,6 @@
 #define COLOR_GREEN_ALPHA(x) nvgRGBA(0, 255, 0, x)
 #define COLOR_BLUE nvgRGBA(0, 0, 255, 255)
 #define COLOR_BLUE_ALPHA(x) nvgRGBA(0, 0, 255, x)
-#define COLOR_GRACE_BLUE nvgRGBA(0, 100, 255, 255)
-#define COLOR_GRACE_BLUE_ALPHA(x) nvgRGBA(0, 100, 255, x)
 #define COLOR_ORANGE nvgRGBA(255, 175, 3, 255)
 #define COLOR_ORANGE_ALPHA(x) nvgRGBA(255, 175, 3, x)
 #define COLOR_YELLOW_ALPHA(x) nvgRGBA(218, 202, 37, x)
@@ -242,7 +240,6 @@ typedef struct UIScene {
   float lane_pos_dist_since_set = 0.;
   float lane_pos_dist_last_t = 0.;
   float lane_pos_max_steer_deg = 150.;
-  bool auto_lane_pos_active = false;
   
   Rect wheel_touch_rect;
   bool wheel_rotates = true;
@@ -272,9 +269,6 @@ typedef struct UIScene {
   Rect measure_slots_rect;
   Rect measure_slot_touch_rects[10];
   int num_measures = UIMeasure::NUM_MEASURES; // the number of cases handled in ui_draw_measures() in paint.cc
-  float measures_touch_timeout = 10.;
-  float measures_last_tap_t = -measures_touch_timeout;
-  
   Rect speed_rect;
   float road_roll, device_roll;
   

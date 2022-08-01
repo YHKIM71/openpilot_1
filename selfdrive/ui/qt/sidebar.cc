@@ -106,7 +106,6 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   QPainter p(this);
   p.setPen(Qt::NoPen);
   p.setRenderHint(QPainter::Antialiasing);
-
   p.fillRect(rect(), QColor(57, 57, 57));
 
   // static imgs
