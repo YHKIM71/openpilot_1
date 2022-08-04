@@ -31,7 +31,7 @@ elif [ "$(getprop persist.sys.locale)" != "ko-KR" ]; then
   sleep 2
   reboot
 else
-  chmod 644 /data/openpilot/installer/boot_finish
+  chmod 644 ./installer/boot_finish
   mount -o ro,remount /system
 fi
 if [ -z "$BASEDIR" ]; then
