@@ -1,9 +1,11 @@
 #!/usr/bin/bash
 
-  chmod 744 /system/media/bootanimation.zip
-  chmod 700 ./selfdrive/ui/qt/spinner
+  mount -o rw,remount /system
   chmod 700 ./scripts/*.sh
-  chmod 700 ./installer/updater/*.json
+  chmod 700 ./selfdrive/manager/build.py
+  chmod 700 ./selfdrive/manager/custom_dep.py
+  chmod 700 ./selfdrive/manager/manager.py
+
   sed -i -e 's/\r$//' ./*.sh
   sed -i -e 's/\r$//' ./selfdrive/*.py
   sed -i -e 's/\r$//' ./selfdrive/manager/*.py
@@ -13,6 +15,9 @@
   sed -i -e 's/\r$//' ./selfdrive/controls/*.py
   sed -i -e 's/\r$//' ./selfdrive/controls/lib/*.py
   sed -i -e 's/\r$//' ./selfdrive/locationd/models/*.py
+  sed -i -e 's/\r$//' ./selfdrive/manager/build.py
+  sed -i -e 's/\r$//' ./selfdrive/manager/custom_dep.py
+  sed -i -e 's/\r$//' ./selfdrive/manager/manager.py
   sed -i -e 's/\r$//' ./cereal/*.py
   sed -i -e 's/\r$//' ./cereal/*.capnp
   sed -i -e 's/\r$//' ./selfdrive/car/gm/*.py
@@ -46,4 +51,4 @@
   sed -i -e 's/\r$//' ./launch_openpilot.sh
   sed -i -e 's/\r$//' ./Jenkinsfile
   sed -i -e 's/\r$//' ./SConstruct
-  sed -i -e 's/\r$//' ./installer/updater/*.json
+  mount -o ro,remount /system
